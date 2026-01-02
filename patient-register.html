@@ -31,7 +31,7 @@ function registerPatient(){
     password: document.getElementById("password").value
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbwyyKzmo5nfg-mEtKGyalkIJJ9OAk3CLZfHvorJ6-3nPczhePr-R0oYzB_yyBemZm-Y/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbz_4PnkH81KcWjBmQysykru812vnX13kx1xIn_MXQfynhsVW1uKWkUAArqC2E_syx1Y/exec", {
     method: "POST",
     body: JSON.stringify(data)
   })
@@ -42,7 +42,7 @@ function registerPatient(){
       document.getElementById("msg").innerHTML="❌ Mobile number already registered";
     } else if(res.status === "OK"){
       document.getElementById("msg").style.color="green";
-      document.getElementById("msg").innerHTML=
+      document.getElementById("msg").innerHTML =
         "✅ Account Created Successfully<br>Patient ID: <b>"+res.patientID+"</b>";
     } else {
       document.getElementById("msg").style.color="red";
