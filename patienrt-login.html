@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Patient Login</title>
+</head>
+<body>
+
+<h2>Patient Login</h2>
+
+<form onsubmit="loginPatient(); return false;">
+  <input type="tel" id="mobile" placeholder="Mobile Number" required><br><br>
+  <input type="password" id="password" placeholder="Password" required><br><br>
+  <button type="submit">Login</button>
+</form>
+
+<p id="msg"></p>
+
+<script>
+function loginPatient() {
+  let data = localStorage.getItem(mobile.value);
+  if (!data) {
+    msg.innerHTML = "❌ Account not found";
+    return;
+  }
+
+  let patient = JSON.parse(data);
+  if (patient.password === password.value) {
+    msg.innerHTML =
+      "✅ Welcome " + patient.name +
+      "<br><b>Patient ID:</b> " + patient.patientID;
+  } else {
+    msg.innerHTML = "❌ Wrong password";
+  }
+}
+</script>
+
+</body>
+</html>
