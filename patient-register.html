@@ -1,46 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Patient Registration</title>
+  <title>New Patient Registration</title>
 </head>
 <body>
 
 <h2>New Patient Registration</h2>
 
-<form onsubmit="savePatient(); return false;">
+<form onsubmit="registerPatient(); return false;">
   <input type="text" id="name" placeholder="Full Name" required><br><br>
-  <input type="tel" id="mobile" placeholder="Mobile Number" required><br><br>
-  <input type="email" id="email" placeholder="Email"><br><br>
+  <input type="tel" id="mobile" placeholder="Mobile Number (10 digit)" required><br><br>
+  <input type="email" id="email" placeholder="Email (optional)"><br><br>
   <input type="password" id="password" placeholder="Create Password" required><br><br>
   <button type="submit">Create Account</button>
 </form>
 
-<p id="msg"></p>
+<p id="msg" style="font-weight:bold;"></p>
 
 <script>
-function generatePatientID() {
-  let year = new Date().getFullYear();
-  let last = localStorage.getItem("KHC_LAST_ID");
-  last = last ? parseInt(last) + 1 : 1;
-  localStorage.setItem("KHC_LAST_ID", last);
-  return "KHC-" + year + "-" + String(last).padStart(4, "0");
+function normalizeMobile(m){
+  return m.replace(/\D/g,'').slice(-10);
 }
 
-function savePatient() {
-  let patientID = generatePatientID();
-
-  let patient = {
-    patientID: patientID,
-    name: name.value,
-    mobile: mobile.value,
-    email: email.value,
-    password: password.value
+function registerPatient(){
+  const data = {
+    action: "register",
+    name: document.getElementById("name").value,
+    mobile: normalizeMobile(document.getElementById("mobile").value),
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value
   };
 
-  localStorage.setItem(patient.mobile, JSON.stringify(patient));
-
-  document.getElementById("msg").innerHTML =
-    "✅ Account Created Successfully<br><b>Patient ID:</b> " + patientID;
+  fetch("https://script.google.com/macros/s/AKfycbwyyKzmo5nfg-mEtKGyalkIJJ9OAk3CLZfHvorJ6-3nPczhePr-R0oYzB_yyBemZm-Y/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.status === "EXISTS"){
+      document.getElementById("msg").style.color="red";
+      document.getElementById("msg").innerHTML="❌ Mobile number already registered";
+    } else if(res.status === "OK"){
+      document.getElementById("msg").style.color="green";
+      document.getElementById("msg").innerHTML=
+        "✅ Account Created Successfully<br>Patient ID: <b>"+res.patientID+"</b>";
+    } else {
+      document.getElementById("msg").style.color="red";
+      document.getElementById("msg").innerHTML="❌ Error. Try again.";
+    }
+  });
 }
 </script>
 
