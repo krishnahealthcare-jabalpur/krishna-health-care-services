@@ -1,38 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Patient Login</title>
-</head>
-<body>
-
-<h2>Patient Login</h2>
-
-<form onsubmit="loginPatient(); return false;">
-  <input type="tel" id="mobile" placeholder="Mobile Number" required><br><br>
-  <input type="password" id="password" placeholder="Password" required><br><br>
-  <button type="submit">Login</button>
-</form>
-
-<p id="msg"></p>
-
 <script>
+function normalizeMobile(m){
+  return m.replace(/\D/g,'').slice(-10);
+}
+
 function loginPatient() {
-  let data = localStorage.getItem(mobile.value);
+  let mobile = normalizeMobile(document.getElementById("mobile").value);
+  let password = document.getElementById("password").value;
+
+  let data = localStorage.getItem(mobile);
   if (!data) {
-    msg.innerHTML = "❌ Account not found";
+    document.getElementById("msg").innerHTML =
+      "❌ Account not found. Please use registered mobile number.";
     return;
   }
 
   let patient = JSON.parse(data);
-  if (patient.password === password.value) {
-    msg.innerHTML =
+  if (patient.password === password) {
+    document.getElementById("msg").innerHTML =
       "✅ Welcome " + patient.name +
       "<br><b>Patient ID:</b> " + patient.patientID;
   } else {
-    msg.innerHTML = "❌ Wrong password";
+    document.getElementById("msg").innerHTML = "❌ Wrong password";
   }
 }
 </script>
-
-</body>
-</html>
