@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Book Blood Test</title>
+  <meta charset="UTF-8">
 </head>
 <body>
 
@@ -9,7 +10,7 @@
 
 <form onsubmit="bookTest(); return false;">
 
-  <input type="text" id="patientID" placeholder="Patient ID (KHC-2026-XXX)" required><br><br>
+  <input type="text" id="patientID" placeholder="Patient ID (KHC-XXX)" required><br><br>
 
   <input type="text" id="name" placeholder="Patient Name" required><br><br>
 
@@ -19,10 +20,10 @@
 
   <select id="test" required>
     <option value="">Select Test</option>
-    <option>CBC</option>
-    <option>Thyroid Profile</option>
-    <option>Diabetes</option>
-    <option>Full Body Checkup</option>
+    <option value="CBC">CBC</option>
+    <option value="Thyroid Profile">Thyroid Profile</option>
+    <option value="Diabetes">Diabetes</option>
+    <option value="Full Body Checkup">Full Body Checkup</option>
   </select><br><br>
 
   <input type="number" id="mrp" placeholder="MRP Amount" required><br><br>
@@ -31,8 +32,8 @@
 
   <select id="paymentMode" required>
     <option value="">Payment Mode</option>
-    <option>Cash</option>
-    <option>UPI</option>
+    <option value="Cash">Cash</option>
+    <option value="UPI">UPI</option>
   </select><br><br>
 
   <button type="submit">Confirm Booking</button>
@@ -41,17 +42,23 @@
 <p id="msg" style="font-weight:bold;"></p>
 
 <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbz_4PnkH81KcWjBmQysykru812vnX13kx1xIn_MXQfynhsVW1uKWkUAArqC2E_syx1Y/exec";
+
 function normalizeMobile(m){
   return m.replace(/\D/g,'').slice(-10);
 }
 
 function bookTest(){
+
+  document.getElementById("msg").style.color = "black";
+  document.getElementById("msg").innerHTML = "⏳ Booking in progress...";
+
   const data = {
     action: "booking",
-    patientID: document.getElementById("patientID").value,
-    name: document.getElementById("name").value,
+    patientID: document.getElementById("patientID").value.trim(),
+    name: document.getElementById("name").value.trim(),
     mobile: normalizeMobile(document.getElementById("mobile").value),
-    address: document.getElementById("address").value,
+    address: document.getElementById("address").value.trim(),
     test: document.getElementById("test").value,
     mrp: document.getElementById("mrp").value,
     amount: document.getElementById("amount").value,
@@ -59,24 +66,27 @@ function bookTest(){
     paymentStatus: "Pending"
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbz_4PnkH81KcWjBmQysykru812vnX13kx1xIn_MXQfynhsVW1uKWkUAArqC2E_syx1Y/exec", {
+  fetch(API_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify(data)
   })
-  .then(r => r.json())
+  .then(response => response.json())
   .then(res => {
     if(res.status === "BOOKED"){
-      document.getElementById("msg").style.color="green";
+      document.getElementById("msg").style.color = "green";
       document.getElementById("msg").innerHTML =
         "✅ Booking Successful<br>Status: <b>Pending</b>";
     } else {
-      document.getElementById("msg").style.color="red";
+      document.getElementById("msg").style.color = "red";
       document.getElementById("msg").innerHTML =
         "❌ Booking failed. Try again.";
     }
   })
-  .catch(()=>{
-    document.getElementById("msg").style.color="red";
+  .catch(error => {
+    document.getElementById("msg").style.color = "red";
     document.getElementById("msg").innerHTML =
       "❌ Server error. Try again.";
   });
