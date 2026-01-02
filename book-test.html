@@ -1,33 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Book Blood Test</title>
+  <title>Book Blood Test</title>
 </head>
 <body>
 
 <h2>Book Blood Test</h2>
 
-<form>
-<input type="text" placeholder="Patient ID (KHC-XXXX)" required><br><br>
-<input type="text" placeholder="Patient Name" required><br><br>
-<input type="tel" placeholder="Mobile Number" required><br><br>
+<form onsubmit="submitBooking(); return false;">
 
-<select>
-<option>CBC</option>
-<option>Thyroid Profile</option>
-<option>Diabetes</option>
-<option>Full Body Checkup</option>
-</select><br><br>
+  <input type="text" id="patientID" placeholder="Patient ID (KHC-2026-0003)" required><br><br>
 
-<select>
-<option>Cash on Collection</option>
-<option>UPI Payment</option>
-</select><br><br>
+  <input type="text" id="name" placeholder="Patient Name" required><br><br>
 
-<button type="submit">Submit Booking</button>
+  <input type="tel" id="mobile" placeholder="Mobile Number" required><br><br>
+
+  <select id="test" required>
+    <option value="">Select Test</option>
+    <option>CBC</option>
+    <option>Thyroid Profile</option>
+    <option>Diabetes</option>
+    <option>Full Body Checkup</option>
+  </select><br><br>
+
+  <select id="payment" required>
+    <option value="">Payment Mode</option>
+    <option>Cash on Collection</option>
+    <option>UPI</option>
+  </select><br><br>
+
+  <button type="submit">Submit Booking</button>
 </form>
 
-<p>💳 UPI: <b>8120262770@ybl</b></p>
+<p id="msg"></p>
+
+<script>
+function submitBooking() {
+
+  let data = {
+    patientID: document.getElementById("patientID").value,
+    name: document.getElementById("name").value,
+    mobile: document.getElementById("mobile").value,
+    test: document.getElementById("test").value,
+    payment: document.getElementById("payment").value
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbwGH2OKPELDfasvAIiHZSoCKRLGLyYY7OK3jis1suo-qN1JryuLcDurs4mgOLS0C_Xs/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(res => res.text())
+  .then(res => {
+    document.getElementById("msg").innerHTML =
+      "✅ Booking Successful!<br>Patient ID: <b>" + data.patientID + "</b>";
+  })
+  .catch(err => {
+    document.getElementById("msg").innerHTML = "❌ Error. Try again.";
+  });
+}
+</script>
 
 </body>
 </html>
