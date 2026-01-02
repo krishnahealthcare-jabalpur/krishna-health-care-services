@@ -1,26 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Patient Login</title>
+</head>
+<body>
+
+<h2>Patient Login</h2>
+
+<form onsubmit="loginPatient(); return false;">
+  <input type="text" id="mobile" placeholder="Registered Mobile Number" required><br><br>
+  <input type="password" id="password" placeholder="Password" required><br><br>
+  <button type="submit">Login</button>
+</form>
+
+<hr>
+
+<div id="msg" style="font-weight:bold;color:green;"></div>
+
 <script>
 function normalizeMobile(m){
   return m.replace(/\D/g,'').slice(-10);
 }
 
-function loginPatient() {
-  let mobile = normalizeMobile(document.getElementById("mobile").value);
-  let password = document.getElementById("password").value;
+function loginPatient(){
+  var mobile = normalizeMobile(document.getElementById("mobile").value);
+  var password = document.getElementById("password").value;
 
-  let data = localStorage.getItem(mobile);
-  if (!data) {
-    document.getElementById("msg").innerHTML =
-      "❌ Account not found. Please use registered mobile number.";
+  var data = localStorage.getItem(mobile);
+
+  if(!data){
+    document.getElementById("msg").style.color = "red";
+    document.getElementById("msg").innerHTML = "❌ Account not found";
     return;
   }
 
-  let patient = JSON.parse(data);
-  if (patient.password === password) {
-    document.getElementById("msg").innerHTML =
-      "✅ Welcome " + patient.name +
-      "<br><b>Patient ID:</b> " + patient.patientID;
-  } else {
+  var patient = JSON.parse(data);
+
+  if(patient.password !== password){
+    document.getElementById("msg").style.color = "red";
     document.getElementById("msg").innerHTML = "❌ Wrong password";
+    return;
   }
+
+  document.getElementById("msg").style.color = "green";
+  document.getElementById("msg").innerHTML =
+    "✅ Login Successful<br>" +
+    "Name: <b>" + patient.name + "</b><br>" +
+    "Patient ID: <b>" + patient.patientID + "</b>";
 }
 </script>
+
+</body>
+</html>
