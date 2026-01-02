@@ -8,14 +8,12 @@
 <h2>Patient Login</h2>
 
 <form onsubmit="loginPatient(); return false;">
-  <input type="text" id="mobile" placeholder="Registered Mobile Number" required><br><br>
+  <input type="tel" id="mobile" placeholder="Registered Mobile Number" required><br><br>
   <input type="password" id="password" placeholder="Password" required><br><br>
   <button type="submit">Login</button>
 </form>
 
-<hr>
-
-<div id="msg" style="font-weight:bold;"></div>
+<p id="msg" style="font-weight:bold;"></p>
 
 <script>
 function normalizeMobile(m){
@@ -23,30 +21,35 @@ function normalizeMobile(m){
 }
 
 function loginPatient(){
-  var mobile = normalizeMobile(document.getElementById("mobile").value);
-  var password = document.getElementById("password").value;
+  const data = {
+    action: "login",
+    mobile: normalizeMobile(document.getElementById("mobile").value),
+    password: document.getElementById("password").value
+  };
 
-  var data = localStorage.getItem(mobile);
-
-  if(!data){
-    document.getElementById("msg").style.color = "red";
-    document.getElementById("msg").innerHTML = "❌ Account not found";
-    return;
-  }
-
-  var patient = JSON.parse(data);
-
-  if(patient.password !== password){
-    document.getElementById("msg").style.color = "red";
-    document.getElementById("msg").innerHTML = "❌ Wrong password";
-    return;
-  }
-
-  document.getElementById("msg").style.color = "green";
-  document.getElementById("msg").innerHTML =
-    "✅ Login Successful<br>" +
-    "Name: <b>" + patient.name + "</b><br>" +
-    "Patient ID: <b>" + patient.patientID + "</b>";
+  fetch("https://script.google.com/macros/s/AKfycbwyyKzmo5nfg-mEtKGyalkIJJ9OAk3CLZfHvorJ6-3nPczhePr-R0oYzB_yyBemZm-Y/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.status === "OK"){
+      document.getElementById("msg").style.color="green";
+      document.getElementById("msg").innerHTML =
+        "✅ Login Successful<br>" +
+        "Name: <b>" + res.name + "</b><br>" +
+        "Patient ID: <b>" + res.patientID + "</b>";
+    } else {
+      document.getElementById("msg").style.color="red";
+      document.getElementById("msg").innerHTML =
+        "❌ Invalid mobile number or password";
+    }
+  })
+  .catch(()=>{
+    document.getElementById("msg").style.color="red";
+    document.getElementById("msg").innerHTML =
+      "❌ Server error. Try again.";
+  });
 }
 </script>
 
